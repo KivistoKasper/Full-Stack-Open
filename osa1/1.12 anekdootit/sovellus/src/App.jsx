@@ -50,16 +50,23 @@ const App = () => {
     setSelected(newRand);
   }
 
+  // most votes index
+  const topIndex = points.reduce((accumulator, current, index) => {
+    return current > points[accumulator] ? index : accumulator;
+  }, 0);
+  console.log("most votes index:", topIndex);
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]}
-      <div>
-      Has {points[selected]} votes
-      </div>
+      <div>Has {points[selected]} votes</div>
       <div>
         <Button handleClick={randomGenrator} text="Next anecdote"/>
         <Button handleClick={() => handlePoints(selected)} text="Vote"/>
       </div>
+      <h1>Anecdote with most votes</h1>
+      {anecdotes[topIndex]}
     </div>
   )
 }
