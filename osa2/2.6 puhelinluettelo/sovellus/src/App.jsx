@@ -5,17 +5,21 @@ const Part = (props) => {
   //console.log(props.info)
   return (
     <div>
-      <p>{props.info.name} {props.info.number}</p>
+      {props.info.name} {props.info.number}
     </div>
   )
 }
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' ,number: '+355 11 55'}
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [newFilter, setNewFilter] = useState('')
 
 
 const addPerson = event => {
@@ -36,7 +40,6 @@ const addPerson = event => {
   setPersons(persons.concat(nameObject));
   setNewName('');
   setNewNumber('');
-  
 }
 
 const handleNameChange = event => {
@@ -47,10 +50,24 @@ const handleNumberChange = event => {
   //console.log('inout change ', event.target.value);
   setNewNumber(event.target.value);
 }
+const handleFilterChange = event => {
+  //console.log('filter ', event.target.value);
+  setNewFilter(event.target.value);
+  //persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()));
+}
+
+const personsToShow  = persons.filter(person =>
+   person.name.toLowerCase().includes(newFilter.toLowerCase()));
+//console.log('flr', personsToShow )
 
   return (
     <div>
       <h2>Phonebook</h2>
+        <form>
+          <div>filter with <input value ={newFilter} onChange={handleFilterChange}/> </div>
+        </form>
+
+      <h2>add a new</h2>
       <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNameChange}/>
@@ -62,11 +79,12 @@ const handleNumberChange = event => {
           <button type="submit">add</button>
         </div>
       </form>
+
       <h2>Numbers</h2>
       <div>
-        {persons.map(person =>
-          <Part key={person.name} info={person}/>
-        )}
+        {personsToShow.map(person =>
+            <Part key={person.name} info={person} />
+          )}
       </div>
     </div>
   )
