@@ -19,6 +19,18 @@ const App = () => {
 const addNumber = event => {
   event.preventDefault();
   //console.log('click ', event.target.value);
+
+ 
+
+  
+
+  if ( persons.some(person => person.name ===newName) ){
+    console.log('included error')
+    const msg = `${newName} is already added to phonebook`;
+    alert(msg);
+    return;
+  }
+
   const nameObject = {
     name: newName,
   }
