@@ -10,6 +10,42 @@ const Part = (props) => {
   )
 }
 
+const FilterForm = ({newFilter, handleFilterChange}) => {
+  return (
+    <form>
+      <div>
+        filter with <input value ={newFilter} onChange={handleFilterChange}/> 
+      </div>
+    </form>
+  )
+}
+
+const PersonForm = ({addPerson, newName, newNumber, handleNameChange, handleNumberChange}) => {
+  return (
+    <form onSubmit={addPerson}>
+        <div>
+          name: <input value={newName} onChange={handleNameChange}/>
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNumberChange}/> 
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+  )
+}
+
+const Persons = ({personsToShow}) => {
+  return (
+    <div>
+      {personsToShow.map(person =>
+          <Part key={person.name} info={person} />
+        )}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -53,7 +89,6 @@ const handleNumberChange = event => {
 const handleFilterChange = event => {
   //console.log('filter ', event.target.value);
   setNewFilter(event.target.value);
-  //persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()));
 }
 
 const personsToShow  = persons.filter(person =>
@@ -63,29 +98,20 @@ const personsToShow  = persons.filter(person =>
   return (
     <div>
       <h2>Phonebook</h2>
-        <form>
-          <div>filter with <input value ={newFilter} onChange={handleFilterChange}/> </div>
-        </form>
+        <FilterForm newFilter={newFilter} handleFilterChange={handleFilterChange}/>
 
-      <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange}/> 
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <h3>add a new</h3>
+        <PersonForm 
+          addPerson={addPerson}
+          newName={newName}
+          newNumber={newNumber}
+          handleNameChange={handleNameChange}
+          handleNumberChange={handleNumberChange}
+        />
 
-      <h2>Numbers</h2>
-      <div>
-        {personsToShow.map(person =>
-            <Part key={person.name} info={person} />
-          )}
-      </div>
+      <h3>Numbers</h3>
+        <Persons personsToShow={personsToShow}/>
+
     </div>
   )
 
