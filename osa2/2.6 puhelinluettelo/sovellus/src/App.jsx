@@ -1,5 +1,18 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
+import './index.css'
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="updateInfo">
+      {message}
+    </div>
+  )
+}
 
 const Button = (props) => {
   return (
@@ -62,6 +75,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [message, setMessage] = useState(null)
 
 // get data from server
 useEffect(() => {
@@ -97,6 +111,11 @@ const addPerson = event => {
       setPersons(persons.concat(returnedPerson));
       setNewName('');
       setNewNumber('');
+      // show info message
+      setMessage(`${returnedPerson.name} was added to phonebook`)
+      setTimeout(() => {
+        setMessage(null)
+      },3000)
     })
 }
 
@@ -114,8 +133,13 @@ const deletePerson = person => {
     .then(deletedPerson => {
       //console.log(deletePerson);
       // delete locally
-      const filteredPersons = persons.filter(p => p.id !== person.id);
+      const filteredPersons = persons.filter(p => p.id !== deletedPerson.id);
       setPersons(filteredPersons);
+      // show info message
+      setMessage(`${deletedPerson.name} was deleted from phonebook`)
+      setTimeout(() => {
+        setMessage(null)
+      },3000)
     });
 }
 
@@ -132,6 +156,11 @@ const updatePerson = (person, newNumber) => {
       setPersons(updatedPersons)
       setNewName('');
       setNewNumber('');
+      // show info message
+      setMessage(`${updatedPerson.name}'s number was updated`)
+      setTimeout(() => {
+        setMessage(null)
+      },3000)
     });
 }
 
@@ -155,6 +184,7 @@ const personsToShow  = persons.filter(person =>
   return (
     <div>
       <h2>Phonebook</h2>
+        <Notification message={message}/>
         <FilterForm newFilter={newFilter} handleFilterChange={handleFilterChange}/>
 
       <h3>add a new</h3>
