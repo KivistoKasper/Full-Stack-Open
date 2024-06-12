@@ -14,6 +14,18 @@ const Notification = ({ message }) => {
   )
 }
 
+const Error = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
+
 const Button = (props) => {
   return (
     <button onClick={props.handleClick}>
@@ -76,6 +88,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [message, setMessage] = useState(null)
+  const [error, setError] = useState(null)
 
 // get data from server
 useEffect(() => {
@@ -161,6 +174,17 @@ const updatePerson = (person, newNumber) => {
       setTimeout(() => {
         setMessage(null)
       },3000)
+    })
+    .catch(error => {
+      // Tässä voisi vielä tarkastella virhekoodin, ettei kyseessä ole jokin toinen virhe...
+      // show error message
+      setError(`${newObj.name} has laready been deleted from the server`)
+      setTimeout(() => {
+        setError(null)
+      },5000)
+      // delete locally
+      const filteredPersons = persons.filter(p => p.id !== person.id);
+      setPersons(filteredPersons);
     });
 }
 
@@ -185,6 +209,7 @@ const personsToShow  = persons.filter(person =>
     <div>
       <h2>Phonebook</h2>
         <Notification message={message}/>
+        <Error message={error}/>
         <FilterForm newFilter={newFilter} handleFilterChange={handleFilterChange}/>
 
       <h3>add a new</h3>
