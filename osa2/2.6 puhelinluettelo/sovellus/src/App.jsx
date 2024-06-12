@@ -1,11 +1,20 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+const Button = (props) => {
+  return (
+    <button onClick={props.handleClick}>
+      {props.text}
+    </button>
+  )
+}
+
 const Part = (props) => {
   //console.log(props.info)
   return (
     <div>
       {props.info.name} {props.info.number}
+      <Button handleClick={props.deletePerson} text="delete"/>
     </div>
   )
 }
@@ -36,11 +45,13 @@ const PersonForm = ({addPerson, newName, newNumber, handleNameChange, handleNumb
   )
 }
 
-const Persons = ({personsToShow}) => {
+const Persons = ({personsToShow, deletePerson}) => {
   return (
     <div>
       {personsToShow.map(person =>
-          <Part key={person.name} info={person} />
+          <Part key={person.name} 
+          info={person} 
+          deletePerson={() => deletePerson(person)}/>
         )}
     </div>
   )
@@ -79,11 +90,30 @@ const addPerson = event => {
   // send data to server
   personService.create(nameObject)
     .then(returnedPerson => {
-      console.log(returnedPerson)
+      //console.log(returnedPerson)
       setPersons(persons.concat(returnedPerson));
       setNewName('');
       setNewNumber('');
     })
+}
+
+// delete person from server
+const deletePerson = person => {
+  // confirm deletion
+  const msg = `Delete ${person.name} ?`;
+  if (!confirm(msg)){
+    return;
+  }
+
+  //console.log(`Deletetion: ${person.name}`)
+  // delete from server
+  personService.deleteOne(person.id)
+    .then(deletedPerson => {
+      //console.log(deletePerson);
+      // delete locally
+      const filteredPersons = persons.filter(p => p.id !== person.id);
+      setPersons(filteredPersons);
+    });
 }
 
 const handleNameChange = event => {
@@ -118,7 +148,9 @@ const personsToShow  = persons.filter(person =>
         />
 
       <h3>Numbers</h3>
-        <Persons personsToShow={personsToShow}/>
+        <Persons personsToShow={personsToShow}
+        deletePerson={deletePerson}
+        />
 
     </div>
   )
