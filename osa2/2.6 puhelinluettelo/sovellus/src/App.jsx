@@ -178,7 +178,7 @@ const updatePerson = (person, newNumber) => {
     .catch(error => {
       // Tässä voisi vielä tarkastella virhekoodin, ettei kyseessä ole jokin toinen virhe...
       // show error message
-      setError(`${newObj.name} has laready been deleted from the server`)
+      setError(`${newObj.name} has already been deleted from the server`)
       setTimeout(() => {
         setError(null)
       },5000)
