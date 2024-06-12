@@ -75,10 +75,13 @@ useEffect(() => {
 const addPerson = event => {
   event.preventDefault();
   //console.log('click ', event.target.value);
-  if ( persons.some(person => person.name ===newName) ){
+  if ( persons.some(person => person.name === newName) ){
     //console.log('included error')
-    const msg = `${newName} is already added to phonebook`;
-    alert(msg);
+    const msg = `${newName} is already added to phonebook, replace the old number with a new one?`;
+    if (confirm(msg)){
+      const person = persons.find(p => p.name === newName);
+      updatePerson(person, newNumber);
+    }
     return;
   }
 
@@ -97,7 +100,7 @@ const addPerson = event => {
     })
 }
 
-// delete person from server
+// delete person 
 const deletePerson = person => {
   // confirm deletion
   const msg = `Delete ${person.name} ?`;
@@ -113,6 +116,22 @@ const deletePerson = person => {
       // delete locally
       const filteredPersons = persons.filter(p => p.id !== person.id);
       setPersons(filteredPersons);
+    });
+}
+
+// update persons
+const updatePerson = (person, newNumber) => {
+  const newObj = {
+    name: person.name,
+    number: newNumber
+  }
+  personService.update(person.id, newObj)
+    .then(updatedPerson =>{
+      //console.log('update ', updatedPerson)
+      const updatedPersons = persons.map( p => p.id !== person.id ? p : updatedPerson)
+      setPersons(updatedPersons)
+      setNewName('');
+      setNewNumber('');
     });
 }
 
