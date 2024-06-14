@@ -11,6 +11,29 @@ const FilterCountries = ({newFilter, handleFilterChange}) => {
   )
 }
 
+
+const Country = ({country}) => {
+  console.log('lang: ', country.languages)
+  return(
+    <div>
+      <h1>{country.name.common}</h1>
+      <div>Capital: {country.capital}</div>
+      <div>Area: {country.area}</div>
+      
+      <p> <span style={{fontWeight: 'bold'}}>Languages</span> </p>
+      <ul>
+        {Object.values(country.languages).map(l => 
+          <li key={l}>
+            {l}
+          </li>
+        )}
+      </ul>
+    </div>
+  )
+
+}
+
+
 const Countries = ({countriesToShow}) => {
   const arrSize = countriesToShow.length;
   console.log('arrSize ', arrSize)
@@ -34,9 +57,9 @@ const Countries = ({countriesToShow}) => {
   }
   else if ( arrSize == 1){
     const country = countriesToShow[0];
-    console.log('coutry ', country)
+    //console.log('coutry ', country)
     return(
-      <h1>{country.name.common}</h1>
+      <Country country={country}/>
     )
   }
   else {
