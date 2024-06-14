@@ -2,6 +2,15 @@ import { useState, useEffect } from 'react'
 import countryService from './services/countries'
 import './index.css'
 
+
+const Button = (props) => {
+  return (
+    <button onClick={props.handleClick}>
+      {props.text}
+    </button>
+  )
+}
+
 const FilterCountries = ({newFilter, handleFilterChange}) => {
   return (
     <form>
@@ -41,7 +50,18 @@ const Country = ({country}) => {
 }
 
 
-const Countries = ({countriesToShow}) => {
+const Countries = ({countriesToShow, showCountry, handleShow}) => {
+  
+
+  if ( showCountry !== ''){
+    console.log('show country ', showCountry)
+    return(
+      <div>
+        <Country country={showCountry}/>
+      </div>
+    )
+  }
+
   const arrSize = countriesToShow.length;
   console.log('arrSize ', arrSize)
   if (arrSize > 10){
@@ -57,6 +77,7 @@ const Countries = ({countriesToShow}) => {
         {countriesToShow.map(c =>
             <div key={c.name.common}>
               {c.name.common}
+              <Button handleClick={() => handleShow(c)} text="show"/>
             </div>
           )}
       </div>
@@ -82,6 +103,7 @@ const Countries = ({countriesToShow}) => {
 function App() {
   const [countries, setCountries] = useState([]);
   const [newFilter, setNewFilter] = useState('');
+  const [showCountry, setShowCountry] = useState('');
 
   // get data from server
   useEffect(() => {
@@ -97,6 +119,16 @@ function App() {
   const handleFilterChange = event => {
     //console.log('filter ', event.target.value);
     setNewFilter(event.target.value);
+    setShowCountry('');
+  }
+  
+  const handleShow = country => {
+    //console.log('show country ', country)
+    countryService.get(country.name.common)
+    .then(c => {
+      setShowCountry(c)
+      console.log('show c ', c)
+    })
   }
 
   const countriesToShow  = countries.filter(c =>
@@ -107,7 +139,10 @@ function App() {
    <div>
       <FilterCountries newFilter={newFilter} handleFilterChange={handleFilterChange}/>
       <div>
-        <Countries countriesToShow={countriesToShow}/>    
+        <Countries countriesToShow={countriesToShow} 
+        showCountry={showCountry} 
+        handleShow={handleShow}
+        />    
       </div>
    </div>
    
