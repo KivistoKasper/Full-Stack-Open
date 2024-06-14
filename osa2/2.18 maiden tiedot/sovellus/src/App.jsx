@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import countryService from './services/countries'
+import './index.css'
 
 const FilterCountries = ({newFilter, handleFilterChange}) => {
   return (
@@ -13,7 +14,7 @@ const FilterCountries = ({newFilter, handleFilterChange}) => {
 
 
 const Country = ({country}) => {
-  console.log('lang: ', country.languages)
+  console.log('flag: ', Object.values(country.flags)[0])
   return(
     <div>
       <h1>{country.name.common}</h1>
@@ -22,12 +23,18 @@ const Country = ({country}) => {
       
       <p> <span style={{fontWeight: 'bold'}}>Languages</span> </p>
       <ul>
-        {Object.values(country.languages).map(l => 
-          <li key={l}>
-            {l}
+        {Object.values(country.languages).map(language => 
+          <li key={language}>
+            {language}
           </li>
         )}
       </ul>
+
+      <img src={Object.values(country.flags)[0]} 
+      alt={`Flag of ${country.name.common}`}
+      className="flag"
+      />
+
     </div>
   )
 
