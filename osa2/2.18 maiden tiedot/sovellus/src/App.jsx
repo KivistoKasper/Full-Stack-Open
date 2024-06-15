@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import countryService from './services/countries'
+import weatherService from './services/weather'
 import './index.css'
 
 
@@ -21,9 +22,41 @@ const FilterCountries = ({newFilter, handleFilterChange}) => {
   )
 }
 
+const Weather = ({capital}) => {
+  const [weather, setWeather] = useState('');
+
+  
+  // prevent continious weather updates
+  if ( weather !== ''){
+    const weatherIcon = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
+    //console.log('icon ', weatherIcon)
+    return (
+      <div>
+        <h2>Weather in {capital}</h2>
+        <p>Temperature: {weather.main.temp} Celsius</p>
+
+        <img  src={weatherIcon}
+        alt={weather.weather.description}
+        />
+
+        <p>Wind: {weather.wind.speed} m/s</p>
+      </div>
+    )
+  }
+  else{
+    weatherService.get(capital)
+    .then(weather => {
+      setWeather(weather)
+      //console.log('weather.weather', weather.weather)
+    })
+  }
+    
+  
+
+}
 
 const Country = ({country}) => {
-  console.log('flag: ', Object.values(country.flags)[0])
+  //console.log('flag: ', Object.values(country.flags)[0])
   return(
     <div>
       <h1>{country.name.common}</h1>
@@ -44,6 +77,8 @@ const Country = ({country}) => {
       className="flag"
       />
 
+      <Weather capital={country.capital}/>
+      
     </div>
   )
 
@@ -51,10 +86,9 @@ const Country = ({country}) => {
 
 
 const Countries = ({countriesToShow, showCountry, handleShow}) => {
-  
 
   if ( showCountry !== ''){
-    console.log('show country ', showCountry)
+    //console.log('show country ', showCountry)
     return(
       <div>
         <Country country={showCountry}/>
@@ -63,7 +97,7 @@ const Countries = ({countriesToShow, showCountry, handleShow}) => {
   }
 
   const arrSize = countriesToShow.length;
-  console.log('arrSize ', arrSize)
+  //console.log('arrSize ', arrSize)
   if (arrSize > 10){
     return(
       <div>
@@ -127,7 +161,7 @@ function App() {
     countryService.get(country.name.common)
     .then(c => {
       setShowCountry(c)
-      console.log('show c ', c)
+      //console.log('show c ', c)
     })
   }
 
