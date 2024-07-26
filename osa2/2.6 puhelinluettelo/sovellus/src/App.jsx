@@ -144,12 +144,12 @@ const deletePerson = person => {
   // delete from server
   personService.deleteOne(person.id)
     .then(deletedPerson => {
-      //console.log(deletePerson);
+      //console.log(deletedPerson);
       // delete locally
-      const filteredPersons = persons.filter(p => p.id !== deletedPerson.id);
+      const filteredPersons = persons.filter(p => p.id !== person.id);
       setPersons(filteredPersons);
       // show info message
-      setMessage(`${deletedPerson.name} was deleted from phonebook`)
+      setMessage(`${person.name} was deleted from phonebook`)
       setTimeout(() => {
         setMessage(null)
       },3000)
