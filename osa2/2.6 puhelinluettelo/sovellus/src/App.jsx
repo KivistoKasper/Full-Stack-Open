@@ -130,6 +130,13 @@ const addPerson = event => {
         setMessage(null)
       },3000)
     })
+    .catch(error => {
+      //console.log(error.response.data)
+      setError(error.response.data.error)
+      setTimeout(() => {
+        setError(null)
+      },5000)
+    })
 }
 
 // delete person 
@@ -176,15 +183,15 @@ const updatePerson = (person, newNumber) => {
       },3000)
     })
     .catch(error => {
-      // Tässä voisi vielä tarkastella virhekoodin, ettei kyseessä ole jokin toinen virhe...
       // show error message
-      setError(`${newObj.name} has already been deleted from the server`)
+      //setError(`${newObj.name} has already been deleted from the server`)
+      setError(error.response.data.error)
       setTimeout(() => {
         setError(null)
       },5000)
       // delete locally
-      const filteredPersons = persons.filter(p => p.id !== person.id);
-      setPersons(filteredPersons);
+      //const filteredPersons = persons.filter(p => p.id !== person.id);
+      //setPersons(filteredPersons);
     });
 }
 
