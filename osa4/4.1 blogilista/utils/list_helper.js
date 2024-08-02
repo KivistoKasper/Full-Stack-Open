@@ -10,7 +10,26 @@ const totalLikes = (blogs) => {
     )
     return sumOfLikes
 }
+
+const favouriteBlog = (blogs) => {
+
+    if (blogs.length === 0){
+        return ('No blogs is array')
+    }
+
+    const blogOfMostLikes = blogs.reduce(
+        (max, blog) => blog.likes > max.likes ? blog : max, 
+        blogs[0]
+    )
+
+    const tt = {
+        title: blogOfMostLikes.title,
+        author: blogOfMostLikes.author,
+        likes: blogOfMostLikes.likes
+    }
+    return tt
+}
   
   module.exports = {
-    dummy, totalLikes
+    dummy, totalLikes, favouriteBlog
   }

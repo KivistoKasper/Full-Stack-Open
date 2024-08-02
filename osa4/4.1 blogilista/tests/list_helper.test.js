@@ -88,3 +88,26 @@ describe('total likes', () => {
     assert.strictEqual(result, 36)
   })
 })
+
+describe('favourite blog', () => {
+  const blogOfMostLikes = {
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    likes: 12
+  }
+
+  test('when list is empty', () => {
+    const result = listHelper.favouriteBlog([])
+    assert.strictEqual(result, 'No blogs is array')
+  })
+
+  test('when list has only one blog', () => {
+    const result = listHelper.favouriteBlog([blogOfMostLikes])
+    assert.deepStrictEqual(result, blogOfMostLikes)
+  })
+
+  test('when bigger list is given', () => {
+    const result = listHelper.favouriteBlog(blogs)
+    assert.deepStrictEqual(result, blogOfMostLikes)
+  })
+})
