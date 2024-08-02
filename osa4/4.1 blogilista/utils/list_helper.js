@@ -15,7 +15,7 @@ const totalLikes = (blogs) => {
 
 const favouriteBlog = (blogs) => {
     if (blogs.length === 0){
-        return ('No blogs is array')
+        return ('No blogs in array')
     }
     const blogOfMostLikes = blogs.reduce(
         (max, blog) => blog.likes > max.likes ? blog : max, 
@@ -30,7 +30,7 @@ const favouriteBlog = (blogs) => {
 
 const mostBlogs = (blogs) => {
     if (blogs.length === 0){
-        return ('No blogs is array')
+        return ('No blogs in array')
     }
     const authorCounts = blogs.reduce(
         (counts, blog) => {
@@ -54,7 +54,7 @@ const mostBlogs = (blogs) => {
 
   const mostLikes = (blogs) => {
     if (blogs.length === 0){
-        return ('No blogs is array')
+        return ('No blogs in array')
     }
     const authorLikeCounts = blogs.reduce(
         (counts, blog) => {

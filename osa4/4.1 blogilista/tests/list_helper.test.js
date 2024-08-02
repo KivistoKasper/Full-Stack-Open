@@ -98,7 +98,7 @@ describe('favourite blog', () => {
 
   test('when list is empty', () => {
     const result = listHelper.favouriteBlog([])
-    assert.strictEqual(result, 'No blogs is array')
+    assert.strictEqual(result, 'No blogs in array')
   })
 
   test('when list has only one blog', () => {
@@ -120,7 +120,7 @@ describe('author with most blogs', () => {
 
   test('when list is empty', () => {
     const result = listHelper.mostBlogs([])
-    assert.strictEqual(result, 'No blogs is array')
+    assert.strictEqual(result, 'No blogs in array')
   })
 
   test('when list has only one blog', () => {
@@ -146,7 +146,7 @@ describe('author with most likes', () => {
 
   test('when list is empty', () => {
     const result = listHelper.mostLikes([])
-    assert.strictEqual(result, 'No blogs is array')
+    assert.strictEqual(result, 'No blogs in array')
   })
 
   test('when list has only one blog', () => {
