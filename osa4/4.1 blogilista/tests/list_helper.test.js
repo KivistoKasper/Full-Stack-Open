@@ -111,3 +111,55 @@ describe('favourite blog', () => {
     assert.deepStrictEqual(result, blogOfMostLikes)
   })
 })
+
+describe('author with most blogs', () => {
+  const authorWithMostBlogs = {
+    author: "Robert C. Martin",
+    blogs: 3
+  }
+
+  test('when list is empty', () => {
+    const result = listHelper.mostBlogs([])
+    assert.strictEqual(result, 'No blogs is array')
+  })
+
+  test('when list has only one blog', () => {
+    const result = listHelper.mostBlogs([blogs[5]])
+    assert.deepStrictEqual(result, 
+      {
+      author: "Robert C. Martin",
+      blogs: 1
+      })
+  })
+
+  test('when bigger list is given', () => {
+    const result = listHelper.mostBlogs(blogs)
+    assert.deepStrictEqual(result, authorWithMostBlogs)
+  })
+})
+
+describe('author with most likes', () => {
+  const authorWithMostLikes = {
+    author: "Edsger W. Dijkstra",
+    likes: 17
+  }
+
+  test('when list is empty', () => {
+    const result = listHelper.mostLikes([])
+    assert.strictEqual(result, 'No blogs is array')
+  })
+
+  test('when list has only one blog', () => {
+    const result = listHelper.mostLikes([blogs[2]])
+    assert.deepStrictEqual(result, 
+      {
+        author: "Edsger W. Dijkstra",
+        likes: 12
+      })
+  })
+
+  test('when bigger list is given', () => {
+    const result = listHelper.mostLikes(blogs)
+    assert.deepStrictEqual(result, authorWithMostLikes)
+  })
+})
