@@ -44,26 +44,26 @@ beforeEach(async () => {
     await blogObject.save()
 })
 
-describe.only('api/blogs GET', () => {
-    test.only('blogs are returned as json', async () => {
+describe('api/blogs GET', () => {
+    test('blogs are returned as json', async () => {
         await api
             .get('/api/blogs')
             .expect(200)
             .expect('Content-Type', /application\/json/)
     })
     
-    test.only('there are three blogs', async () => {
+    test('there are three blogs', async () => {
         const response = await api.get('/api/blogs')
         assert.strictEqual(response.body.length, InitialBlogs.length)
     })
     
-    test.only('the first blog\'s writer is Michael Chan', async () => {
+    test('the first blog\'s writer is Michael Chan', async () => {
         const response = await api.get('/api/blogs')
         const authors = response.body.map(e => e.author)
         assert(authors.includes('Michael Chan'))
     })
 
-    test.only('the returned blogs are identified by id not _id', async () => {
+    test('the returned blogs are identified by id not _id', async () => {
         const response = await api.get('/api/blogs')
         const blogIds = response.body.map(e => e.id)
         const InitialBlogIds = InitialBlogs.map(e => e._id)
@@ -72,7 +72,7 @@ describe.only('api/blogs GET', () => {
 })
 
 describe.only('api/blogs POST', () => {
-    test.only('a valid blog can be added ', async () => {
+    test.only('a valid blog can be added', async () => {
         const newBlog = {
             title: "Test Title",
             author: "Test Author",
@@ -87,9 +87,30 @@ describe.only('api/blogs POST', () => {
           .expect('Content-Type', /application\/json/)
       
         const response = await api.get('/api/blogs')
-        const titles = response.body.map(r => r.title)
+        const titles = response.body.map(b => b.title)
         assert.strictEqual(response.body.length, InitialBlogs.length + 1)
         assert(titles.includes('Test Title'))
+      })
+
+      test.only('blog can be added without like amount', async () => {
+        const newBlog = {
+            title: "Test Title No Like",
+            author: "Test Author No Like",
+            url: "https://testurl.com"
+        }
+      
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(201)
+          .expect('Content-Type', /application\/json/)
+      
+        const response = await api.get('/api/blogs')
+        const addedBlog = response.body.find(b => b.title === 'Test Title No Like')
+        
+        assert.strictEqual(response.body.length, InitialBlogs.length + 1)
+        assert.strictEqual(addedBlog.title, 'Test Title No Like')
+        assert.strictEqual(addedBlog.likes, 0)
       })
 
 })
