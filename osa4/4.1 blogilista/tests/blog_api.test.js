@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const Blog = require('../models/blog')
 const mongoose = require('mongoose')
@@ -7,7 +7,7 @@ const app = require('../app')
 
 const api = supertest(app)
 
-const blogs = [
+const InitialBlogs = [
     {
       _id: "5a422a851b54a676234d17f7",
       title: "React patterns",
@@ -36,32 +36,41 @@ const blogs = [
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-    let blogObject = new Blog(blogs[0])
+    let blogObject = new Blog(InitialBlogs[0])
     await blogObject.save()
-    blogObject = new Blog(blogs[1])
+    blogObject = new Blog(InitialBlogs[1])
     await blogObject.save()
-    blogObject = new Blog(blogs[2])
+    blogObject = new Blog(InitialBlogs[2])
     await blogObject.save()
 })
 
-test.only('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
+describe.only('api/blogs GET', () => {
+    test.only('blogs are returned as json', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
+    
+    test.only('there are three blogs', async () => {
+        const response = await api.get('/api/blogs')
+        assert.strictEqual(response.body.length, InitialBlogs.length)
+    })
+    
+    test.only('the first blog\'s writer is Michael Chan', async () => {
+        const response = await api.get('/api/blogs')
+        const authors = response.body.map(e => e.author)
+        assert(authors.includes('Michael Chan'))
+    })
 
-test.only('there are three notes', async () => {
-    const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, blogs.length)
-})
-
-test.only('the first blog\'s writer is Michael Chan', async () => {
-    const response = await api.get('/api/blogs')
-    const authors = response.body.map(e => e.author)
-    assert(authors.includes('Michael Chan'))
-  })
-
-after(async () => {
-  await mongoose.connection.close()
+    test.only('the returned blogs are identified by id not _id', async () => {
+        const response = await api.get('/api/blogs')
+        const blogIds = response.body.map(e => e.id)
+        const InitialBlogIds = InitialBlogs.map(e => e._id)
+        assert.deepStrictEqual(blogIds, InitialBlogIds)
+    })
+    
+    after(async () => {
+        await mongoose.connection.close()
+    })
 })
