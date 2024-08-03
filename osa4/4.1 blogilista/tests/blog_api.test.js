@@ -69,8 +69,31 @@ describe.only('api/blogs GET', () => {
         const InitialBlogIds = InitialBlogs.map(e => e._id)
         assert.deepStrictEqual(blogIds, InitialBlogIds)
     })
-    
-    after(async () => {
-        await mongoose.connection.close()
-    })
+})
+
+describe.only('api/blogs POST', () => {
+    test.only('a valid blog can be added ', async () => {
+        const newBlog = {
+            title: "Test Title",
+            author: "Test Author",
+            url: "https://testurl.com",
+            likes: 6
+        }
+      
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(201)
+          .expect('Content-Type', /application\/json/)
+      
+        const response = await api.get('/api/blogs')
+        const titles = response.body.map(r => r.title)
+        assert.strictEqual(response.body.length, InitialBlogs.length + 1)
+        assert(titles.includes('Test Title'))
+      })
+
+})
+
+after(async () => {
+    await mongoose.connection.close()
 })
