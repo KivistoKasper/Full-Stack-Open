@@ -107,10 +107,40 @@ describe.only('api/blogs POST', () => {
       
         const response = await api.get('/api/blogs')
         const addedBlog = response.body.find(b => b.title === 'Test Title No Like')
-        
+
         assert.strictEqual(response.body.length, InitialBlogs.length + 1)
         assert.strictEqual(addedBlog.title, 'Test Title No Like')
         assert.strictEqual(addedBlog.likes, 0)
+      })
+
+      test.only('blog without title is not added', async () => {
+        const newBlog = {
+            author: "Test Author No Title",
+            url: "https://testurlnotitle.com"
+        }
+      
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(400)
+      
+        const response = await api.get('/api/blogs')
+        assert.strictEqual(response.body.length, InitialBlogs.length)
+      })
+
+      test.only('blog without url is not added', async () => {
+        const newBlog = {
+            title: "Test Title No URL",
+            author: "Test Author No URL"
+        }
+      
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(400)
+      
+        const response = await api.get('/api/blogs')
+        assert.strictEqual(response.body.length, InitialBlogs.length)
       })
 
 })
