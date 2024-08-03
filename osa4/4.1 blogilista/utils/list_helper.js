@@ -45,7 +45,7 @@ const mostBlogs = (blogs) => {
         }, 
         Object.keys(authorCounts)[0]
     )
-    logger.info(`max author: ${maxAuthor}`)
+    //logger.info(`max author: ${maxAuthor}`)
     return {
       author: maxAuthor,
       blogs: authorCounts[maxAuthor]
@@ -69,7 +69,7 @@ const mostBlogs = (blogs) => {
         }, 
         Object.keys(authorLikeCounts)[0]
     )
-    logger.info(`max likes author: ${maxLikesAuthor}`)
+    //logger.info(`max likes author: ${maxLikesAuthor}`)
     return {
       author: maxLikesAuthor,
       likes: authorLikeCounts[maxLikesAuthor]
