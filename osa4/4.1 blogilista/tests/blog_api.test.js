@@ -44,6 +44,7 @@ beforeEach(async () => {
     await blogObject.save()
 })
 
+// ----------------------GET----------------------
 describe('api/blogs GET', () => {
     test('blogs are returned as json', async () => {
         await api
@@ -71,6 +72,7 @@ describe('api/blogs GET', () => {
     })
 })
 
+// ----------------------POST----------------------
 describe('api/blogs POST', () => {
     test('a valid blog can be added', async () => {
         const newBlog = {
@@ -144,6 +146,7 @@ describe('api/blogs POST', () => {
       })
 })
 
+// ----------------------DELETE----------------------
 describe.only('api/blogs/:id DELETE', () => {
   test.only('a valid blog can be deleted', async () => {
     const blogToDelete = InitialBlogs[0]
@@ -176,6 +179,62 @@ describe.only('api/blogs/:id DELETE', () => {
       .expect(400)
 
     const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, InitialBlogs.length)
+  })
+})
+
+// ----------------------PUT----------------------
+describe.only('api/blogs/:id PUT', () => {
+
+  test.only('a valid blog can be updated', async () => {
+    const updateID = InitialBlogs[0]._id
+    const blog = {
+      likes: 99
+    }
+  
+    await api    
+      .put(`/api/blogs/${updateID}`) 
+      .send(blog)   
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const updatedBlog = response.body.find(b => b.id === updateID)
+
+    assert.strictEqual(response.body.length, InitialBlogs.length)
+    assert.strictEqual(updatedBlog.id, updateID)
+    assert.strictEqual(updatedBlog.likes, 99)
+  })
+
+  test.only('an invalid blog id can\'t be updated', async () => {
+    const invalidID = '5a422a851b54a676234d17ff'
+    const blog = {
+      likes: 88
+    }
+    await api    
+      .put(`/api/blogs/${invalidID}`)
+      .send(blog)  
+      .expect(404)
+
+    const response = await api.get('/api/blogs')
+    const ids = response.body.map(b => b.id)
+    assert(!ids.includes(invalidID))
+    assert.strictEqual(response.body.length, InitialBlogs.length)
+  })
+
+  test.only('a malformatted blog id can\'t be updated', async () => {
+    const invalidID = '5a422a851b54a676234d17'
+    const blog = {
+      likes: 77
+    }
+    await api    
+      .put(`/api/blogs/${invalidID}`)  
+      .send(blog)  
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    const ids = response.body.map(b => b.id)
+    assert(!ids.includes(invalidID))
     assert.strictEqual(response.body.length, InitialBlogs.length)
   })
 })
