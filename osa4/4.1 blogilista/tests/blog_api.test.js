@@ -71,8 +71,8 @@ describe('api/blogs GET', () => {
     })
 })
 
-describe.only('api/blogs POST', () => {
-    test.only('a valid blog can be added', async () => {
+describe('api/blogs POST', () => {
+    test('a valid blog can be added', async () => {
         const newBlog = {
             title: "Test Title",
             author: "Test Author",
@@ -92,7 +92,7 @@ describe.only('api/blogs POST', () => {
         assert(titles.includes('Test Title'))
       })
 
-      test.only('blog can be added without like amount', async () => {
+      test('blog can be added without like amount', async () => {
         const newBlog = {
             title: "Test Title No Like",
             author: "Test Author No Like",
@@ -113,7 +113,7 @@ describe.only('api/blogs POST', () => {
         assert.strictEqual(addedBlog.likes, 0)
       })
 
-      test.only('blog without title is not added', async () => {
+      test('blog without title is not added', async () => {
         const newBlog = {
             author: "Test Author No Title",
             url: "https://testurlnotitle.com"
@@ -128,7 +128,7 @@ describe.only('api/blogs POST', () => {
         assert.strictEqual(response.body.length, InitialBlogs.length)
       })
 
-      test.only('blog without url is not added', async () => {
+      test('blog without url is not added', async () => {
         const newBlog = {
             title: "Test Title No URL",
             author: "Test Author No URL"
@@ -142,7 +142,42 @@ describe.only('api/blogs POST', () => {
         const response = await api.get('/api/blogs')
         assert.strictEqual(response.body.length, InitialBlogs.length)
       })
+})
 
+describe.only('api/blogs/:id DELETE', () => {
+  test.only('a valid blog can be deleted', async () => {
+    const blogToDelete = InitialBlogs[0]
+  
+    await api    
+      .delete(`/api/blogs/${blogToDelete._id}`)    
+      .expect(204)
+
+    const response = await api.get('/api/blogs')
+    const ids = response.body.map(r => r.id)
+
+    assert(!ids.includes(blogToDelete._id))
+    assert.strictEqual(response.body.length, InitialBlogs.length - 1)
+  })
+
+  test.only('an invalid blog id can\'t be deleted', async () => {
+    const invalidID = '5a422a851b54a676234d17ff'
+    await api    
+      .delete(`/api/blogs/${invalidID}`)    
+      .expect(204)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, InitialBlogs.length)
+  })
+
+  test.only('a malformatted blog id can\'t be deleted', async () => {
+    const invalidID = '5a422a851b54a676234d17'
+    await api    
+      .delete(`/api/blogs/${invalidID}`)    
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, InitialBlogs.length)
+  })
 })
 
 after(async () => {
