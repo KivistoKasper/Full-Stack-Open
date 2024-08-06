@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik1hcmtrdSIsImlkIjoiNjZiMjFlMGVkYTQ0ZmJlZDgxMjdjNDgyIiwiaWF0IjoxNzIyOTQ5NTkyfQ.R7M_ws2T7iiZeYe5Bpas1jmjCdXAVqnShey1be_3XbM
+
+{
+    "title": "Mehiläisten Maailma",
+    "author": "Maija Muro",
+    "url": "maijamuro/kirjat/mehilaistenmaailma.com",
+    "likes": 0
+}
