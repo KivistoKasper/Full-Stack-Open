@@ -36,12 +36,21 @@ blogsRouter.delete('/:id', async (request, response) => {
   const user = request.user
 
   const blog = await Blog.findById(deleteBlogId)
-  //console.log(blog)
+  if (!blog) {
+    response.status(404).end()
+  }
 
-  if ( blog.user.toString() === user.id.toString() ) {
+  if (!blog.user) {
+    // this is if there happens to be blog in database that has no user who added it. 
+    // if this happens then the blog is removed 
     const deletedBlog = await Blog.findByIdAndDelete(deleteBlogId)
     response.status(204).end()
-  } else {
+  }
+  else if ( blog.user.toString() === user.id.toString() ) {
+    const deletedBlog = await Blog.findByIdAndDelete(deleteBlogId)
+    response.status(204).end()
+  } 
+  else {
     response.status(403).json({error: 'no access rights to the content'})
   }
 

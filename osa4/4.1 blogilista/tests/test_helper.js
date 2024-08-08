@@ -76,7 +76,7 @@ const makeRootUser = async () => {
 module.exports = {
   initialBlogs,
   nonExistingId,
-  notesInDb: blogsInDb,
+  blogsInDb,
   usersInDb,
   makeRootUser
 }
