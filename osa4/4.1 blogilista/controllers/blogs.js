@@ -13,13 +13,13 @@ blogsRouter.get('/', async (request, response) => {
   
 blogsRouter.post('/', async (request, response) => {
     const body = request.body
-    //const user = await User.findById(body.userId)
+
     const decodedToken = jwt.verify(request.token, process.env.SECRET)  
     if (!decodedToken.id) {    
       return response.status(401).json({ error: 'token invalid' })  
     }  
     const user = await User.findById(decodedToken.id)
-    console.log('user', user)
+    //console.log('user', user)
 
     const blog = new Blog({
       title: body.title,
@@ -37,9 +37,24 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const id = request.params.id
-  const deletedBlog = await Blog.findByIdAndDelete(id)
-  response.status(204).end()
+  const deleteBlogId = request.params.id
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  const userId = decodedToken.id
+
+  if (!userId) {    
+    return response.status(401).json({ error: 'token invalid' })  
+  } 
+
+  const blog = await Blog.findById(deleteBlogId)
+  //console.log(blog)
+
+  if ( blog.user.toString() === userId.toString() ) {
+    const deletedBlog = await Blog.findByIdAndDelete(deleteBlogId)
+    response.status(204).end()
+  } else {
+    response.status(403).json({error: 'no access rights to the content'})
+  }
+
 })
 
 blogsRouter.put('/:id', async (request, response) => {
