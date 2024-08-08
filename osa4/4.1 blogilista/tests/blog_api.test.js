@@ -1,6 +1,7 @@
 const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const Blog = require('../models/blog')
+const helper = require('./test_helper')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -33,6 +34,21 @@ const InitialBlogs = [
       __v: 0
     } 
   ]
+let token = 'asd'
+
+describe('sign in...', async () => {
+  //token = await helper.makeRootUser()
+  await helper.makeRootUser()
+  response = await api
+              .post('/api/login')
+              .send({
+                username: 'root',
+                password: 'secret'
+              })
+  token = `Bearer ${response.body.token}`
+  console.log("----TOKEN: ", token)
+})
+
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -49,6 +65,7 @@ describe('api/blogs GET', () => {
     test('blogs are returned as json', async () => {
         await api
             .get('/api/blogs')
+            .set('Authorization', token)
             .expect(200)
             .expect('Content-Type', /application\/json/)
     })
