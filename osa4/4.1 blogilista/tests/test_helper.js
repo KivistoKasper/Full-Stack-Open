@@ -64,13 +64,16 @@ const makeRootUser = async () => {
   const passwordHash = await bcrypt.hash(root.password, 10)
   const user = new User({ username: root.username, passwordHash })
   await user.save()
-  //const token = jwt.sign(root, process.env.SECRET, {expiresIn: 60*10})
-  /*
-  const singIn = await api
-    .post('api/login')
-    .send(root)
-  */
-  //return `Bearer ${token}`
+}
+
+const rootSignIn = async (api) => {
+  const response = await api
+              .post('/api/login')
+              .send({
+                username: 'root',
+                password: 'secret'
+              })
+  return `Bearer ${response.body.token}`
 }
 
 module.exports = {
@@ -78,5 +81,6 @@ module.exports = {
   nonExistingId,
   blogsInDb,
   usersInDb,
-  makeRootUser
+  makeRootUser,
+  rootSignIn
 }

@@ -8,18 +8,11 @@ const app = require('../app')
 
 const api = supertest(app)
 
-let token = 'asd'
+let token = ''
 
 describe('signing in...', async () => {
-  //token = await helper.makeRootUser()
   await helper.makeRootUser()
-  response = await api
-              .post('/api/login')
-              .send({
-                username: 'root',
-                password: 'secret'
-              })
-  token = `Bearer ${response.body.token}`
+  token = await helper.rootSignIn(api)
   //console.log("----TOKEN: ", token)
 })
 
