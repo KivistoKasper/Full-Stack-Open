@@ -2,6 +2,31 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import './index.css'
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="updateInfo">
+      {message}
+    </div>
+  )
+}
+
+const Error = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
 
 const Button = (props) => {
   return (
@@ -20,6 +45,8 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [message, setMessage] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetch = () => {
@@ -60,9 +87,11 @@ const App = () => {
       setAuthorised(true)
 
     } catch (exception) {      
-      setErrorMessage('wrong credentials')      
+      setError('wrong username or password') 
+      setUsername('')      
+      setPassword('')     
       setTimeout(() => {        
-        setErrorMessage(null)      
+        setError(null)      
       }, 5000)    
     }
 
@@ -87,6 +116,12 @@ const App = () => {
       setNewAuthor('')
       setNewTitle('')
       setNewUrl('')
+
+      // info message
+      setMessage(`new blog: ${blog.title} by ${blog.author} was added`)
+      setTimeout(() => {
+        setMessage(null)
+      },3000)
     })
   }
 
@@ -94,6 +129,8 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={message}/>
+        <Error message={error}/>
           <form onSubmit={handleLogin}>
             <div>
               username
@@ -122,6 +159,8 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={message}/>
+      <Error message={error}/>
       <p>{user.name} logged in
         <Button handleClick={() => handleLogout()} text='Logout'/>
       </p>
