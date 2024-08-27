@@ -3,25 +3,39 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Button = (props) => {
+  return (
+    <button onClick={props.handleClick}>
+      {props.text}
+    </button>
+  )
+}
+
 const App = () => {
   const [username, setUsername] = useState('')   
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
   const [blogs, setBlogs] = useState([])
+  const [authorised, setAuthorised] = useState(false);
 
-  /*
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
-  */
+    const fetch = () => {
+      blogService.getAll().then(blogs =>
+        setBlogs( blogs )
+      )
+    }
+    if (authorised) fetch() 
+  }, [authorised])
 
-  const populateBlogs = () => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }
+  useEffect(() => {    
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')    
+    if (loggedUserJSON) {      
+      const user = JSON.parse(loggedUserJSON)      
+      setUser(user)      
+      blogService.setToken(user.token)   
+      setAuthorised(true) 
+    }  
+  }, [])
 
   const handleLogin = async (event) => {    
     event.preventDefault()    
@@ -30,12 +44,17 @@ const App = () => {
       const user = await loginService.login({        
         username, password,      
       })
+
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
+
       blogService.setToken(user.token)      
       setUser(user)      
       setUsername('')      
       setPassword('')  
-      
-      populateBlogs()
+      //console.log('USER:', user)
+      setAuthorised(true)
 
     } catch (exception) {      
       setErrorMessage('wrong credentials')      
@@ -44,7 +63,13 @@ const App = () => {
       }, 5000)    
     }
 
+    
     console.log('logging in with', username, password)  
+  }
+
+  const handelLogout = event => {
+    window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
   }
 
   if (user === null) {
@@ -75,10 +100,13 @@ const App = () => {
       </div>
     )
   }
-
+  
   return (
     <div>
       <h2>blogs</h2>
+      <p>{user.name} logged in</p>
+      <Button handleClick={() => handelLogout()} text='Log out'/>
+      {console.log(blogs)}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
