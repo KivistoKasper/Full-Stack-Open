@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import NewBlogForm from './components/NewBlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './index.css'
@@ -8,7 +10,6 @@ const Notification = ({ message }) => {
   if (message === null) {
     return null
   }
-
   return (
     <div className="updateInfo">
       {message}
@@ -20,7 +21,6 @@ const Error = ({ message }) => {
   if (message === null) {
     return null
   }
-
   return (
     <div className="error">
       {message}
@@ -47,6 +47,7 @@ const App = () => {
   const [newUrl, setNewUrl] = useState('')
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(null)
+  const [newBlogVisible, setNewBlogVisible] = useState(false)
 
   useEffect(() => {
     const fetch = () => {
@@ -74,19 +75,17 @@ const App = () => {
       const user = await loginService.login({        
         username, password,      
       })
-
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
-
       blogService.setToken(user.token)      
       setUser(user)      
       setUsername('')      
       setPassword('')  
       //console.log('USER:', user)
       setAuthorised(true)
-
-    } catch (exception) {      
+    } 
+    catch (exception) {      
       setError('wrong username or password') 
       setUsername('')      
       setPassword('')     
@@ -125,6 +124,7 @@ const App = () => {
     })
   }
 
+  // things to show when not logged in
   if (user === null) {
     return (
       <div>
@@ -155,46 +155,46 @@ const App = () => {
       </div>
     )
   }
-  
+
+  // things to show when creating new blog
+  const newBlog = () => {
+    const hideWhenVisible = { display: newBlogVisible ? 'none' : '' }
+    const showWhenVisible = { display: newBlogVisible ? '' : 'none' }
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setNewBlogVisible(true)}>new blog</button>
+        </div>
+        <div style={showWhenVisible}>
+          <NewBlogForm
+          title={newTitle}
+          author={newAuthor}
+          url={newUrl}
+          handleAuthorChange={({target}) => setNewAuthor(target.value)}
+          handleTitleChange={({target}) => setNewTitle(target.value)}
+          handleUrlChange={({target}) => setNewUrl(target.value)}
+          handleSubmit={handleNewBlog}
+          />
+          <button onClick={() => setNewBlogVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
+
+  // things to show when logged in
   return (
     <div>
       <h2>blogs</h2>
       <Notification message={message}/>
       <Error message={error}/>
+
       <p>{user.name} logged in
         <Button handleClick={() => handleLogout()} text='Logout'/>
       </p>
-      <h2>create new</h2>
-      <form onSubmit={handleNewBlog}>
-        <div>
-          title:
-            <input
-              type="text"
-              value={newTitle}
-              name='Title'
-              onChange={({target}) => setNewTitle(target.value)}
-            />
-        </div>
-        <div>
-          author:
-            <input
-              type="text"
-              value={newAuthor}
-              name='Author'
-              onChange={({target}) => setNewAuthor(target.value)}
-            />
-        </div>
-        <div>
-          url:
-            <input
-              type="text"
-              value={newUrl}
-              name='Url'
-              onChange={({target}) => setNewUrl(target.value)}
-            />
-        </div>
-        <button type='submit'>create</button>
-      </form>
+
+      {newBlog()}
+
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
