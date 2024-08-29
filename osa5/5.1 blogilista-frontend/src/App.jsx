@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
@@ -48,6 +48,7 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(null)
   const [newBlogVisible, setNewBlogVisible] = useState(false)
+  const newBlogFormRef = useRef()
 
   useEffect(() => {
     const fetch = () => {
@@ -115,6 +116,11 @@ const App = () => {
       setNewAuthor('')
       setNewTitle('')
       setNewUrl('')
+      newBlogFormRef.current.toggleVisibility()
+      console.log("This: ", event.target.Title)
+      event.target.Author.value = ''
+      event.target.Title.value = ''
+      event.target.Url.value = ''
 
       // info message
       setMessage(`new blog: ${blog.title} by ${blog.author} was added`)
@@ -156,28 +162,22 @@ const App = () => {
     )
   }
 
+  
   // things to show when creating new blog
   const newBlog = () => {
-    const hideWhenVisible = { display: newBlogVisible ? 'none' : '' }
-    const showWhenVisible = { display: newBlogVisible ? '' : 'none' }
-
     return (
       <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setNewBlogVisible(true)}>new blog</button>
-        </div>
-        <div style={showWhenVisible}>
+        <Togglable buttonLabel='create blog' ref={newBlogFormRef}>
           <NewBlogForm
-          title={newTitle}
-          author={newAuthor}
-          url={newUrl}
-          handleAuthorChange={({target}) => setNewAuthor(target.value)}
-          handleTitleChange={({target}) => setNewTitle(target.value)}
-          handleUrlChange={({target}) => setNewUrl(target.value)}
-          handleSubmit={handleNewBlog}
+            title={newTitle}
+            author={newAuthor}
+            url={newUrl}
+            handleTitleChange={({target}) => setNewTitle(target.value)}
+            handleAuthorChange={({target}) => setNewAuthor(target.value)}
+            handleUrlChange={({target}) => setNewUrl(target.value)}
+            handleSubmit={handleNewBlog}
           />
-          <button onClick={() => setNewBlogVisible(false)}>cancel</button>
-        </div>
+        </Togglable>
       </div>
     )
   }
