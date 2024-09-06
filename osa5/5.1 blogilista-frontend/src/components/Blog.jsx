@@ -2,7 +2,7 @@ import { useState } from 'react'
 //import '../index.css'
 
 
-const Blog = ({ blog, handleLikeing }) => {
+const Blog = ({ blog, handleLikeing, user, handleDelete }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -16,10 +16,12 @@ const Blog = ({ blog, handleLikeing }) => {
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
+  const showDelete = { display: blog.user.username === user.username ? '' : 'none' }
 
   const toggleVisibility = () => {
     setVisible(!visible)
   }
+
 
   const addLike = (event) => {
     event.preventDefault()
@@ -29,14 +31,24 @@ const Blog = ({ blog, handleLikeing }) => {
     handleLikeing(newBlog)
   }
   
-  
+  const remove = (event) => {
+    event.preventDefault()
+    if (window.confirm(`Delete blog: ${blog.title} by ${blog.author}?`)){
+      handleDelete(blog)
+    }
+    
+  }
   //console.log(blog)
+  //console.log(user)
+  
+
   return (
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>view</button>
       </div>
+
       <div style={showWhenVisible}>
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>hide</button>
@@ -46,6 +58,10 @@ const Blog = ({ blog, handleLikeing }) => {
           <button onClick={addLike}>like</button>
         </div>
         <div>{blog.user.name}</div>
+        
+        <div style={showDelete}>
+          <button onClick={remove}>delete</button>
+        </div>
       </div>
     </div>  
   )

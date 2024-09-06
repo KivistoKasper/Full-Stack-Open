@@ -52,7 +52,10 @@ const App = () => {
         setBlogs( blogs )
       )
     }
-    if (authorised) fetch() 
+    if (authorised) {
+      fetch()
+      setAuthorised(false)
+    } 
   }, [authorised])
 
   useEffect(() => {    
@@ -100,14 +103,16 @@ const App = () => {
 
   const handleNewBlog = (blogObject) => {
     blogService.create(blogObject).then(blog => {
+      console.log(blog)
       setBlogs(blogs.concat(blog))
+      setAuthorised(true) // update blogs and get user info from database
       newBlogFormRef.current.toggleVisibility()
 
       // info message
       setMessage(`new blog: ${blog.title} by ${blog.author} was added`)
       setTimeout(() => {
         setMessage(null)
-      },3000)
+      },4000)
     })
   }
 
@@ -116,6 +121,24 @@ const App = () => {
     blogService.update(blogObject).then(blog => {
       //console.log('did it work??')
     })
+  }
+
+  const handleDelete = (blogObject) => {
+    //console.log('did it work??')
+    
+    blogService.remove(blogObject).then(blog => {
+      //console.log('yes it did!', blogObject)
+      const newBlogs = blogs.filter(item => item.id !== blogObject.id)
+      setBlogs(newBlogs)
+
+       // info message
+       setMessage(`blog: ${blogObject.title} by ${blogObject.author} was deleted`)
+       setTimeout(() => {
+         setMessage(null)
+       },4000)
+    })
+    
+    
   }
 
   // things to show when not logged in
@@ -177,11 +200,16 @@ const App = () => {
 
       {newBlog()}
 
-      {blogs.map(blog =>
+      {// needs updating when like event happens
+      blogs.sort(
+        (a,b) => a.likes < b.likes ? 1 : -1 
+      ).map(blog =>
         <Blog 
         key={blog.id} 
         blog={blog} 
         handleLikeing={handleLikeing}
+        handleDelete={handleDelete}
+        user={user}
         />
       )}
     </div>
