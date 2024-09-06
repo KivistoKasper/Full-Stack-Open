@@ -23,10 +23,8 @@ const Blog = ({ blog, handleLikeing }) => {
 
   const addLike = (event) => {
     event.preventDefault()
-    
     const newBlog = blog
     newBlog.likes += 1
-
     setLikes(newBlog.likes)
     handleLikeing(newBlog)
   }

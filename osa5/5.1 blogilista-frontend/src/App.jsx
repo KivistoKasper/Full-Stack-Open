@@ -112,9 +112,9 @@ const App = () => {
   }
 
   const handleLikeing = (blogObject) => {
-    console.log('adding like to: ', blogObject)
+    //console.log('adding like to: ', blogObject)
     blogService.update(blogObject).then(blog => {
-      console.log('did it work??')
+      //console.log('did it work??')
     })
   }
 
