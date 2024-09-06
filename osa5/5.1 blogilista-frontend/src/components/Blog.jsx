@@ -2,7 +2,7 @@ import { useState } from 'react'
 //import '../index.css'
 
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLikeing }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -12,6 +12,7 @@ const Blog = ({ blog }) => {
   }
   
   const [visible, setVisible] = useState(false)
+  const [likes, setLikes] = useState(blog.likes)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
@@ -20,6 +21,17 @@ const Blog = ({ blog }) => {
     setVisible(!visible)
   }
 
+  const addLike = (event) => {
+    event.preventDefault()
+    
+    const newBlog = blog
+    newBlog.likes += 1
+
+    setLikes(newBlog.likes)
+    handleLikeing(newBlog)
+  }
+  
+  
   //console.log(blog)
   return (
     <div style={blogStyle}>
@@ -32,8 +44,8 @@ const Blog = ({ blog }) => {
         <button onClick={toggleVisibility}>hide</button>
         <div>{blog.url}</div>
         <div>
-          likes {blog.likes}
-          <button >like</button>
+          likes {likes}
+          <button onClick={addLike}>like</button>
         </div>
         <div>{blog.user.name}</div>
       </div>

@@ -111,6 +111,13 @@ const App = () => {
     })
   }
 
+  const handleLikeing = (blogObject) => {
+    console.log('adding like to: ', blogObject)
+    blogService.update(blogObject).then(blog => {
+      console.log('did it work??')
+    })
+  }
+
   // things to show when not logged in
   if (user === null) {
     return (
@@ -171,7 +178,11 @@ const App = () => {
       {newBlog()}
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog 
+        key={blog.id} 
+        blog={blog} 
+        handleLikeing={handleLikeing}
+        />
       )}
     </div>
   )
