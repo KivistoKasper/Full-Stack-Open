@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const newBlogForm = ({ createBlog }) => {
+const NewBlogForm = ({ createBlog }) => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
@@ -20,41 +21,45 @@ const newBlogForm = ({ createBlog }) => {
     setNewUrl('')
   }
 
-    return (
-      <div>
-        <h2>create new</h2>
-        <form onSubmit={addBlog}>
-          <div>
-            title:
-              <input
-                type="text"
-                value={newTitle}
-                name='Title'
-                onChange={event => setNewTitle(event.target.value)}
-              />
-          </div>
-          <div>
-            author:
-              <input
-                type="text"
-                value={newAuthor}
-                name='Author'
-                onChange={event => setNewAuthor(event.target.value)}
-              />
-          </div>
-          <div>
-            url:
-              <input
-                type="text"
-                value={newUrl}
-                name='Url'
-                onChange={event => setNewUrl(event.target.value)}
-              />
-          </div>
-          <button type='submit'>create</button>
-        </form>
-      </div>
-    )
-  }
+  return (
+    <div>
+      <h2>create new</h2>
+      <form onSubmit={addBlog}>
+        <div>
+          title:
+          <input
+            type="text"
+            value={newTitle}
+            name='Title'
+            onChange={event => setNewTitle(event.target.value)}
+          />
+        </div>
+        <div>
+          author:
+          <input
+            type="text"
+            value={newAuthor}
+            name='Author'
+            onChange={event => setNewAuthor(event.target.value)}
+          />
+        </div>
+        <div>
+          url:
+          <input
+            type="text"
+            value={newUrl}
+            name='Url'
+            onChange={event => setNewUrl(event.target.value)}
+          />
+        </div>
+        <button type='submit'>create</button>
+      </form>
+    </div>
+  )
+}
 
-export default newBlogForm
+NewBlogForm.propTypes = {
+  createBlog: PropTypes.func.isRequired
+}
+
+export default NewBlogForm

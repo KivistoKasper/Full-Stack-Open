@@ -10,7 +10,7 @@ const Blog = ({ blog, handleLikeing, user, handleDelete }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
+
   const [visible, setVisible] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -30,17 +30,17 @@ const Blog = ({ blog, handleLikeing, user, handleDelete }) => {
     setLikes(newBlog.likes)
     handleLikeing(newBlog)
   }
-  
+
   const remove = (event) => {
     event.preventDefault()
     if (window.confirm(`Delete blog: ${blog.title} by ${blog.author}?`)){
       handleDelete(blog)
     }
-    
+
   }
   //console.log(blog)
   //console.log(user)
-  
+
 
   return (
     <div style={blogStyle}>
@@ -58,12 +58,12 @@ const Blog = ({ blog, handleLikeing, user, handleDelete }) => {
           <button onClick={addLike}>like</button>
         </div>
         <div>{blog.user.name}</div>
-        
+
         <div style={showDelete}>
           <button onClick={remove}>delete</button>
         </div>
       </div>
-    </div>  
+    </div>
   )
 }
 
