@@ -21,9 +21,11 @@ describe('<NewBlogForm />', () => {
     id: 1234
   }
 
+  const testUser = userEvent.setup()
+  const handleLikeing = vi.fn()
   let container
   beforeEach(() => {
-    container = render(<Blog blog={blog} user={user}/>).container
+    container = render(<Blog blog={blog} user={user} handleLikeing={handleLikeing}/>).container
   })
 
   test('renders content, but not togglable content', () => {
@@ -36,10 +38,9 @@ describe('<NewBlogForm />', () => {
   })
 
   test('renders togglable content after button press', async () => {
-
-    const user = userEvent.setup()
+    //const user = userEvent.setup()
     const button = screen.getByText('view')
-    await user.click(button)
+    await testUser.click(button)
 
     const div = container.querySelector('.togglableContent')
     //screen.debug(div)
@@ -49,5 +50,25 @@ describe('<NewBlogForm />', () => {
     expect(div).toHaveTextContent('www.componenttesting.com')
     expect(div).toHaveTextContent('likes')
     expect(div).toHaveTextContent('user\'s name')
+  })
+
+  test('pressing like button twice, calls callback function twice', async () => {
+    const viewButton = screen.getByText('view')
+    await testUser.click(viewButton)
+
+    const likesBefore = blog.likes
+    //console.log('likes before: ', likesBefore)
+
+    const likeButton = screen.getByText('like')
+    await testUser.click(likeButton)
+    await testUser.click(likeButton)
+
+    const likesAfter = handleLikeing.mock.calls[0][0].likes
+    //console.log('likes after: ', likesAfter)
+
+    //console.log(handleLikeing.mock.calls)
+    expect(handleLikeing.mock.calls).toHaveLength(2)
+    expect(likesAfter).toEqual(likesBefore+2)
+
   })
 })
