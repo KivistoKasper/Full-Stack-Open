@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 import { beforeEach, describe, expect } from 'vitest'
 
-describe('<NewBlogForm />', () => {
+describe('<Blog />', () => {
 
   const blog = {
     title: 'Component testing is done with react-testing-library',
