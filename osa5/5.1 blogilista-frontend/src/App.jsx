@@ -142,6 +142,7 @@ const App = () => {
   }
 
   // things to show when not logged in
+  // should put this to it's own module in the future
   if (user === null) {
     return (
       <div>
@@ -152,6 +153,7 @@ const App = () => {
           <div>
             username
             <input
+              data-testid='username'
               type="text"
               value={username}
               name='Username'
@@ -161,6 +163,7 @@ const App = () => {
           <div>
             password
             <input
+              data-testid='password'
               type="password"
               value={password}
               name="Password"

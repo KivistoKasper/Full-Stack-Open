@@ -9,7 +9,8 @@
     "test:only": "cross-env NODE_ENV=test npm test -- --test-only",
     "build:ui": "powershell -Command \"Remove-Item -Recurse -Force dist; cd 'D:\\School Work\\Full Stack Open\\Full-Stack-Open\\osa2\\2.6 puhelinluettelo\\sovellus'; npm run build; Copy-Item -Recurse dist 'D:\\School Work\\Full Stack Open Part 3\\Full-Stack-Open-Part-3'\"",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "start:test": "cross-env NODE_ENV=test node index.js"
   },
   "author": "Kasper Kivistö",
   "license": "MIT",
