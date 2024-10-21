@@ -69,5 +69,20 @@ describe('Note app', () => {
       await expect(page.getByText('Testing The Tested Tester Without Testing Testing Manhide')).toBeVisible()
       await expect(page.getByText('likes 1')).toBeVisible()
     })
+
+    test('a blog can be deleted by the maker', async ({ page }) => {
+      // create a new blog 
+      await testHelper.createBlog(page, 'Testing The Tested With Delete', 'Testing Man', 'testingTheUrl.com')
+      // expect blog to appear
+      await expect(page.getByText('Testing The Tested With Delete Testing Manview')).toBeVisible()
+      // click "view" and click "delete" and accept "window.confirm()" -dialog
+      await page.getByRole('button', { name: 'view' }).click()
+      page.on('dialog', async (dialog) => await dialog.accept());
+      await page.getByRole('button', { name: 'delete' }).click()
+
+      // expect like to appear
+      await expect(page.getByText('Testing The Tested With Delete Testing Manview')).not.toBeVisible()
+      await expect(page.getByText('Testing The Tested With Delete Testing Manhide')).not.toBeVisible()
+    })
   })
 })
