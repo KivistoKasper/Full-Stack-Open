@@ -1,4 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+import testHelper from './helper'
 
 describe('Note app', () => {
   beforeEach(async ({ page, request }) => {
@@ -24,9 +25,7 @@ describe('Note app', () => {
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
       // fill form with credentials and click login
-      await page.getByTestId('username').fill('test')
-      await page.getByTestId('password').fill('test')
-      await page.getByRole('button', { name: 'login' }).click()
+      await testHelper.loginWith(page, 'test', 'test')
 
       // expect to be logged in
       await expect(page.getByText('test test logged in')).toBeVisible()
@@ -34,9 +33,7 @@ describe('Note app', () => {
 
     test('fails with wrong credentials', async ({ page }) => {
       // fill form with credentials and click login
-      await page.getByTestId('username').fill('wrong username')
-      await page.getByTestId('password').fill('test')
-      await page.getByRole('button', { name: 'login' }).click()
+      await testHelper.loginWith(page, 'test', 'wrong username')
 
       // expect to not be logged in 
       await expect(page.getByText('test test logged in')).not.toBeVisible()
@@ -47,25 +44,30 @@ describe('Note app', () => {
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
       // login before each test 
-      await page.getByTestId('username').fill('test')
-      await page.getByTestId('password').fill('test')
-      await page.getByRole('button', { name: 'login' }).click()
+      await testHelper.loginWith(page, 'test', 'test')
     })
   
     test('a new blog can be created', async ({ page }) => {
-      // click "create blog"
-      await page.getByRole('button', { name: 'create blog' }).click()
-
-      // fill blog info and submit
-      await page.getByTestId('title').fill('Testing The Tested Tester Without Testing')
-      await page.getByTestId('author').fill('Testing Man')
-      await page.getByTestId('url').fill('testingTheUrl.com')
-      await page.getByRole('button', { name: 'create' }).click()
-
-      // expect blog to appear
+      // create a new blog 
+      await testHelper.createBlog(page, 'Testing The Tested Tester Without Testing', 'Testing Man', 'testingTheUrl.com')
       //const blogaa = await page.getByText('Testing The Tested Tester Without Testing')
       //console.log("blog: ", blogaa.locator('..'))
+      // expect blog to appear
       await expect(page.getByText('Testing The Tested Tester Without Testing Testing Manview')).toBeVisible()
+    })
+
+    test('a blog can be liked', async ({ page }) => {
+      // create a new blog 
+      await testHelper.createBlog(page, 'Testing The Tested Tester Without Testing', 'Testing Man', 'testingTheUrl.com')
+      // expect blog to appear
+      await expect(page.getByText('Testing The Tested Tester Without Testing Testing Manview')).toBeVisible()
+      // click "view" and click "like"
+      await page.getByRole('button', { name: 'view' }).click()
+      await page.getByRole('button', { name: 'like' }).click()
+
+      // expect like to appear
+      await expect(page.getByText('Testing The Tested Tester Without Testing Testing Manhide')).toBeVisible()
+      await expect(page.getByText('likes 1')).toBeVisible()
     })
   })
 })
