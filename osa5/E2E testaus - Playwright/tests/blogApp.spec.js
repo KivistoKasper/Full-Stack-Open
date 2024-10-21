@@ -11,6 +11,13 @@ describe('Note app', () => {
         password: 'test'
       }
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'test2 test2',
+        username: 'test2',
+        password: 'test2'
+      }
+    })
 
     await page.goto('http://localhost:5173')
   })
@@ -26,7 +33,6 @@ describe('Note app', () => {
     test('succeeds with correct credentials', async ({ page }) => {
       // fill form with credentials and click login
       await testHelper.loginWith(page, 'test', 'test')
-
       // expect to be logged in
       await expect(page.getByText('test test logged in')).toBeVisible()
     })
@@ -34,8 +40,18 @@ describe('Note app', () => {
     test('fails with wrong credentials', async ({ page }) => {
       // fill form with credentials and click login
       await testHelper.loginWith(page, 'test', 'wrong username')
-
       // expect to not be logged in 
+      await expect(page.getByText('test test logged in')).not.toBeVisible()
+      await expect(page.getByText('Log in to application')).toBeVisible()
+    })
+
+    test('logging out', async ({ page }) => {
+      // fill form with credentials and click login
+      await testHelper.loginWith(page, 'test', 'test')
+      // expect to be logged in
+      await expect(page.getByText('test test logged in')).toBeVisible()
+      // click "logout" and expect to be logged out
+      await page.getByRole('button', { name: 'Logout' }).click()
       await expect(page.getByText('test test logged in')).not.toBeVisible()
       await expect(page.getByText('Log in to application')).toBeVisible()
     })
@@ -70,7 +86,7 @@ describe('Note app', () => {
       await expect(page.getByText('likes 1')).toBeVisible()
     })
 
-    test('a blog can be deleted by the maker', async ({ page }) => {
+    test('a blog can be deleted by the user who added it', async ({ page }) => {
       // create a new blog 
       await testHelper.createBlog(page, 'Testing The Tested With Delete', 'Testing Man', 'testingTheUrl.com')
       // expect blog to appear
@@ -84,5 +100,24 @@ describe('Note app', () => {
       await expect(page.getByText('Testing The Tested With Delete Testing Manview')).not.toBeVisible()
       await expect(page.getByText('Testing The Tested With Delete Testing Manhide')).not.toBeVisible()
     })
+  })
+
+  describe('Multiple users', () => {
+    beforeEach(async ({ page }) => {
+      // login before each test, add a blog and log out
+      await testHelper.loginWith(page, 'test', 'test')
+      await testHelper.createBlog(page, 'Testing The Tested Tester Without Testing', 'Testing Man', 'testingTheUrl.com')
+      await page.getByRole('button', { name: 'Logout' }).click()
+    })
+    
+    test('only the user who added the blog can see the delete button', async ({ page }) => {
+      // login as test2
+      await testHelper.loginWith(page, 'test2', 'test2')
+      // expect to see blog and not see delete button
+      await expect(page.getByText('Testing The Tested Tester Without Testing Testing Manview')).toBeVisible()
+      await page.getByRole('button', { name: 'view' }).click()
+      await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
+    })
+    
   })
 })
