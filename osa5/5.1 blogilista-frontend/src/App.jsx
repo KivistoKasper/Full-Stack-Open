@@ -120,6 +120,7 @@ const App = () => {
     //console.log('adding like to: ', blogObject)
     blogService.update(blogObject).then(blog => {
       //console.log('did it work??')
+      setAuthorised(true)
     })
   }
 

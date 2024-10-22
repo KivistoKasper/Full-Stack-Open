@@ -120,4 +120,40 @@ describe('Note app', () => {
     })
     
   })
+
+  describe('Multiple blogs', () => {
+    beforeEach(async ({ page }) => {
+      // login before each test, add a blog and log out
+      await testHelper.loginWith(page, 'test', 'test')
+      await testHelper.createBlog(page, 'Blog1', 'Testing Man', 'testingTheUrl.com')
+      await testHelper.createBlog(page, 'Blog2', 'Testing Man', 'testingTheUrl.com')
+      await testHelper.createBlog(page, 'Blog3', 'Testing Man', 'testingTheUrl.com')
+    })
+    
+    test('blogs are in like order', async ({ page }) => { 
+      // expect to see blogs
+      await expect(page.locator('.basicContent').getByText('Blog1 Testing Man')).toBeVisible()
+      await expect(page.locator('.basicContent').getByText('Blog2 Testing Man')).toBeVisible()
+      await expect(page.locator('.basicContent').getByText('Blog3 Testing Man')).toBeVisible()
+      // like blogs  
+      await testHelper.likeBlog(page, 'Blog1 Testing Man', 1)
+      await testHelper.likeBlog(page, 'Blog2 Testing Man', 2)
+      await testHelper.likeBlog(page, 'Blog3 Testing Man', 3)
+      // verify the order is correct
+      const blogContainers = await page.locator('.blog')
+      const blogLenght = await blogContainers.count()
+      const likeCounts = []
+      // parse likes
+      for (let i = 0; i < blogLenght; i++) {
+        const blog = blogContainers.nth(i)
+        const likesText = await blog.locator('text=likes').textContent() // Get the likes text e.g. 'likes 1'
+        const likesCount = parseInt(likesText.replace('likes ', ''), 10) // Extract the number of likes
+        likeCounts.push(likesCount)
+      }
+      // expect that blogs are sorted in descending order of likes
+      const sortedLikeCounts = [...likeCounts].sort((a, b) => b - a)
+      expect(likeCounts).toEqual(sortedLikeCounts)
+    })
+    
+  })
 })
