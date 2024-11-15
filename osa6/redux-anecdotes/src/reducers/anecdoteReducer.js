@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createSlice } from "@reduxjs/toolkit"
 
 /* eslint-disable no-case-declarations */
@@ -24,7 +25,7 @@ const initialState = anecdotesAtStart.map(asObject)
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
-  initialState,
+  initialState: [],
   reducers: {
     createAnecdote(state, action) {
       const content = action.payload
@@ -41,8 +42,14 @@ const anecdoteSlice = createSlice({
         anecdoteToVote.votes += 1
       }
     },
+    appendAnecdote(state, action) {
+      state.push(action.payload)
+    },
+    setAnecdotes(state, action) {
+      return action.payload
+    }
   }
 })
 
-export const {createAnecdote, voteAnecdote} = anecdoteSlice.actions
+export const {createAnecdote, voteAnecdote, appendAnecdote, setAnecdotes} = anecdoteSlice.actions
 export default anecdoteSlice.reducer
