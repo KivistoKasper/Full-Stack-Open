@@ -27,23 +27,23 @@
     },
     {
       "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
-      "id": "98312",
-      "votes": 0
+      "votes": 2,
+      "id": "98312"
     },
     {
-      "id": "046c",
       "content": "asd",
-      "votes": 0
+      "votes": 3,
+      "id": "046c"
     },
     {
-      "id": "eb1a",
       "content": "aaa",
-      "votes": 0
+      "votes": 1,
+      "id": "eb1a"
     },
     {
-      "id": "3883",
       "content": "abc",
-      "votes": 0
+      "votes": 1,
+      "id": "3883"
     }
   ]
 }
