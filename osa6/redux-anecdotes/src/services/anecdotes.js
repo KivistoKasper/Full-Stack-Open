@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-const getId = () => (100000 * Math.random()).toFixed(0)
-
 const baseUrl = 'http://localhost:3001/anecdotes'
 
 const getAll = async () => {
