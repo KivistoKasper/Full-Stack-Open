@@ -12,6 +12,7 @@ const AnecdoteForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
     }
+    
   })
 
   const onCreate = (event) => {
@@ -19,11 +20,25 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
     console.log('new anecdote')
-    newAnecdoteMutation.mutate({content, votes: 0})
-    dispatch({type: "VOTE", msg: `You added ${content}`})
-    setTimeout(() => {
-      dispatch({type: "CLEAR"})
-    }, 3500)
+
+    newAnecdoteMutation.mutate({content, votes: 0}, {
+      onError: (err) => {
+        //console.log("ERRRORRRR", err.response.data.error)
+        dispatch({type: "MSG", msg: err.response.data.error})
+        setTimeout(() => {
+          dispatch({type: "CLEAR"})
+        }, 5000)
+      },
+      onSuccess: () => {
+        dispatch({type: "MSG", msg: `You added ${content}`})
+        setTimeout(() => {
+          dispatch({type: "CLEAR"})
+        }, 3500)
+      }
+    })
+
+    console.log("")
+    
 }
 
   return (

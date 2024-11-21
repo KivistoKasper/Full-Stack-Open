@@ -22,7 +22,7 @@ const App = () => {
   const handleVote = (anecdote) => {
     
     updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes + 1 })
-    dispatch({type: "VOTE", msg: `You voted ${anecdote.content}`})
+    dispatch({type: "MSG", msg: `You voted ${anecdote.content}`})
     setTimeout(() => {
       dispatch({type: "CLEAR"})
     }, 3500)
