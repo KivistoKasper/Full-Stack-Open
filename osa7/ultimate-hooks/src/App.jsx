@@ -18,10 +18,25 @@ const useField = (type) => {
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  useEffect(() => {
+    console.log('effect run ', baseUrl)
+
+    if (baseUrl !== '') {
+      axios.get(baseUrl)
+        .then(response => {
+          console.log("data from server: ", response)
+          setResources(response.data)
+        })
+        .catch(e => {
+          console.log('error in effect run')
+        })
+    }
+  }, [baseUrl])
 
   const create = (resource) => {
-    // ...
+    axios.post(baseUrl, resource).then(
+      console.log(`posted to ${baseUrl}`)
+    )
   }
 
   const service = {
