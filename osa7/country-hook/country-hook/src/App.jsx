@@ -18,7 +18,34 @@ const useField = (type) => {
 const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
-  useEffect(() => {})
+  useEffect(() => {
+    console.log('effect run, get ', name)
+
+    if (name !== '') {
+      console.log("fetching country")
+      axios.get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`)
+      .then(response => {
+        //console.log('response ', response.data)
+        setCountry(
+          {
+            found: true,
+            data: {
+              name: response.data.name.common,
+              capital: response.data.capital[0],
+              population: response.data.population,
+              flag: response.data.flags.png
+            }
+          }
+        )
+      })
+      .catch(error => {
+        //console.error('Error fetching country data:', error);
+        setCountry({
+          found: false
+        });
+      });
+    }
+  }, [name])
 
   return country
 }
