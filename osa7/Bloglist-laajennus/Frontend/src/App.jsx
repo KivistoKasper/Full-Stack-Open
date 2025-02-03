@@ -3,16 +3,23 @@ import { useState, useEffect, createRef } from "react";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import storage from "./services/storage";
+
 import Login from "./components/Login";
 import Blog from "./components/Blog";
 import NewBlog from "./components/NewBlog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useNotificationDispatch } from "./contexts/NotificationContext";
+
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState(null);
+
+  // for notification dispatch
+  const dispatch = useNotificationDispatch();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -27,11 +34,17 @@ const App = () => {
 
   const blogFormRef = createRef();
 
-  const notify = (message, type = "success") => {
+  const notify = (message, state = "success") => {
+    dispatch({ type: "MSG", msg: message, state: state });
+    setTimeout(() => {
+      dispatch({ type: "CLEAR" });
+    }, 3500);
+    /*
     setNotification({ message, type });
     setTimeout(() => {
       setNotification(null);
     }, 5000);
+    */
   };
 
   const handleLogin = async (credentials) => {
@@ -81,7 +94,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-        <Notification notification={notification} />
+        <Notification />
         <Login doLogin={handleLogin} />
       </div>
     );
@@ -92,7 +105,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification notification={notification} />
+      <Notification />
       <div>
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
