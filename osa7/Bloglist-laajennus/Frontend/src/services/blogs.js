@@ -12,9 +12,14 @@ const getAll = () => {
   return request.then((response) => response.data);
 };
 
-const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject, getConfit());
-  return request.then((response) => response.data);
+const update = async (newObject) => {
+  const request = axios.put(
+    `${baseUrl}/${newObject.id}`,
+    newObject,
+    getConfit(),
+  );
+  const response = await request;
+  return response.data;
 };
 
 const create = async (newObject) => {

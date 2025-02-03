@@ -14,16 +14,38 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useNotificationDispatch } from "./contexts/NotificationContext";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  //const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState(null);
 
+  // for mutations
+  const queryClient = useQueryClient();
   // for notification dispatch
   const dispatch = useNotificationDispatch();
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+  // ------- Mutations -------
+  // Keeps this here above the useEffect!
+  // create a new blog mutate.
+  const createBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
+  // for voting
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
+  // for delete
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
+  // ------- Mutations -------
 
   useEffect(() => {
     const user = storage.loadUser();
@@ -32,21 +54,32 @@ const App = () => {
     }
   }, []);
 
+  const blogQuery = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+    retry: 1,
+  });
+
+  if (blogQuery.isLoading) {
+    return <div>loading data...</div>;
+  } else if (blogQuery.isError) {
+    return <div>anecdote service is not avaivable due problems is server</div>;
+  }
+
+  // place blogs data
+  const blogs = blogQuery.data;
+
   const blogFormRef = createRef();
 
+  // notification handler
   const notify = (message, state = "success") => {
     dispatch({ type: "MSG", msg: message, state: state });
     setTimeout(() => {
       dispatch({ type: "CLEAR" });
     }, 3500);
-    /*
-    setNotification({ message, type });
-    setTimeout(() => {
-      setNotification(null);
-    }, 5000);
-    */
   };
 
+  // login handler
   const handleLogin = async (credentials) => {
     try {
       const user = await loginService.login(credentials);
@@ -58,36 +91,35 @@ const App = () => {
     }
   };
 
+  // ------- Blog aggregation -------
+  // handle new blog
   const handleCreate = async (blog) => {
-    const newBlog = await blogService.create(blog);
-    setBlogs(blogs.concat(newBlog));
-    notify(`Blog created: ${newBlog.title}, ${newBlog.author}`);
+    createBlogMutation.mutate(blog);
+    notify(`Blog created: ${blog.title}, ${blog.author}`);
     blogFormRef.current.toggleVisibility();
   };
 
+  // handle blog like
   const handleVote = async (blog) => {
-    console.log("updating", blog);
-    const updatedBlog = await blogService.update(blog.id, {
-      ...blog,
-      likes: blog.likes + 1,
-    });
-
-    notify(`You liked ${updatedBlog.title} by ${updatedBlog.author}`);
-    setBlogs(blogs.map((b) => (b.id === blog.id ? updatedBlog : b)));
+    updateBlogMutation.mutate({ ...blog, likes: blog.likes + 1 });
+    console.log("updating: ", blog);
+    notify(`You liked ${blog.title} by ${blog.author}`);
   };
+
+  // handle blog delete
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      deleteBlogMutation.mutate(blog.id);
+      console.log("Deleting: ", blog);
+      notify(`Blog ${blog.title}, by ${blog.author} removed`);
+    }
+  };
+  // ------- Blog aggregation -------
 
   const handleLogout = () => {
     setUser(null);
     storage.removeUser();
     notify(`Bye, ${user.name}!`);
-  };
-
-  const handleDelete = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      await blogService.remove(blog.id);
-      setBlogs(blogs.filter((b) => b.id !== blog.id));
-      notify(`Blog ${blog.title}, by ${blog.author} removed`);
-    }
   };
 
   if (!user) {
