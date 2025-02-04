@@ -22,6 +22,8 @@ import Users from "./components/Users";
 import User from "./components/User";
 import Blog from "./components/Blog";
 
+import "./index.css";
+
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useNotificationDispatch } from "./contexts/NotificationContext";
 
@@ -164,19 +166,25 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification />
-      <div>
-        {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </div>
       <Router>
+        <nav>
+          <div className="nav">
+            <Link to="/"> blogs </Link>
+            <Link to="/users"> users </Link>
+            <div className="user">
+              {user.name} logged in
+              <button onClick={handleLogout}>logout</button>
+            </div>
+          </div>
+        </nav>
+        <h2>blogs</h2>
+        <Notification />
+
         <Routes>
           <Route
             path="/"
             element={
               <div>
-                <Link to="/users">Show users</Link>
                 <Togglable buttonLabel="create new blog" ref={blogFormRef}>
                   <NewBlog doCreate={handleCreate} />
                 </Togglable>
