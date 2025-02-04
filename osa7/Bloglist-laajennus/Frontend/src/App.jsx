@@ -14,16 +14,12 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useNotificationDispatch } from "./contexts/NotificationContext";
 
 const App = () => {
-  //const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
-
   // for mutations
   const queryClient = useQueryClient();
   // for notification dispatch
   const dispatch = useNotificationDispatch();
 
   // ------- Mutations -------
-  // Keeps this here above the useEffect!
   // create a new blog mutate.
   const createBlogMutation = useMutation({
     mutationFn: blogService.create,
@@ -45,15 +41,30 @@ const App = () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
   });
+  // for saving user
+  const saveUserMutation = useMutation({
+    mutationFn: storage.saveUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+  // for removing user
+  const removeUserMutation = useMutation({
+    mutationFn: storage.removeUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
   // ------- Mutations -------
 
-  useEffect(() => {
-    const user = storage.loadUser();
-    if (user) {
-      setUser(user);
-    }
-  }, []);
+  // getting user
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: storage.loadUser,
+    retry: 1,
+  });
 
+  // getting blogs
   const blogQuery = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
@@ -68,6 +79,8 @@ const App = () => {
 
   // place blogs data
   const blogs = blogQuery.data;
+  // user data
+  const user = userQuery.data;
 
   const blogFormRef = createRef();
 
@@ -79,17 +92,22 @@ const App = () => {
     }, 3500);
   };
 
-  // login handler
+  // ------- user login -------
   const handleLogin = async (credentials) => {
     try {
       const user = await loginService.login(credentials);
-      setUser(user);
-      storage.saveUser(user);
+      saveUserMutation.mutate(user);
       notify(`Welcome back, ${user.name}`);
     } catch (error) {
       notify("Wrong credentials", "error");
     }
   };
+
+  const handleLogout = () => {
+    removeUserMutation.mutate();
+    notify(`Bye, ${user.name}!`);
+  };
+  // ------- user login -------
 
   // ------- Blog aggregation -------
   // handle new blog
@@ -115,12 +133,6 @@ const App = () => {
     }
   };
   // ------- Blog aggregation -------
-
-  const handleLogout = () => {
-    setUser(null);
-    storage.removeUser();
-    notify(`Bye, ${user.name}!`);
-  };
 
   if (!user) {
     return (
