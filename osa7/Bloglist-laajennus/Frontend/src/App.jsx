@@ -20,6 +20,7 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import Users from "./components/Users";
 import User from "./components/User";
+import Blog from "./components/Blog";
 
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useNotificationDispatch } from "./contexts/NotificationContext";
@@ -179,16 +180,18 @@ const App = () => {
                 <Togglable buttonLabel="create new blog" ref={blogFormRef}>
                   <NewBlog doCreate={handleCreate} />
                 </Togglable>
-                <BlogList
-                  blogs={blogs}
-                  doVote={handleVote}
-                  doDelete={handleDelete}
-                />
+                <BlogList blogs={blogs} />
               </div>
             }
           />
           <Route path="/users" element={<Users usersQuery={usersQuery} />} />
           <Route path="/users/:id" element={<User usersQuery={usersQuery} />} />
+          <Route
+            path="/blogs/:id"
+            element={
+              <Blog blogs={blogs} doVote={handleVote} doDelete={handleDelete} />
+            }
+          />
         </Routes>
       </Router>
     </div>
