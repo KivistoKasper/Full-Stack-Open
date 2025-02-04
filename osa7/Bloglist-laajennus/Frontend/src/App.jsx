@@ -11,6 +11,7 @@ import {
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import storage from "./services/storage";
+import userService from "./services/users";
 
 import Login from "./components/Login";
 import BlogList from "./components/BlogList";
@@ -18,6 +19,7 @@ import NewBlog from "./components/NewBlog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import Users from "./components/Users";
+import User from "./components/User";
 
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useNotificationDispatch } from "./contexts/NotificationContext";
@@ -72,11 +74,16 @@ const App = () => {
     queryFn: storage.loadUser,
     retry: 1,
   });
-
   // getting blogs
   const blogQuery = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
+    retry: 1,
+  });
+  // getting users
+  const usersQuery = useQuery({
+    queryKey: ["users"],
+    queryFn: userService.getAll,
     retry: 1,
   });
 
@@ -88,8 +95,9 @@ const App = () => {
 
   // place blogs data
   const blogs = blogQuery.data;
-  // user data
+  // user and all users data
   const user = userQuery.data;
+  //const users = usersQuery.data;
 
   const blogFormRef = createRef();
 
@@ -179,7 +187,8 @@ const App = () => {
               </div>
             }
           />
-          <Route path="/users" element={<Users />} />
+          <Route path="/users" element={<Users usersQuery={usersQuery} />} />
+          <Route path="/users/:id" element={<User usersQuery={usersQuery} />} />
         </Routes>
       </Router>
     </div>

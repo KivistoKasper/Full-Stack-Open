@@ -10,7 +10,7 @@ const getConfit = () => ({
 const getAll = async () => {
   const request = axios.get(baseUrl);
   const response = await request;
-  console.log(response.data);
+  //console.log(response.data);
   return response.data;
 };
 

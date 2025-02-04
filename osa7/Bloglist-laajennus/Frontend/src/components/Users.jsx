@@ -1,22 +1,6 @@
-import userService from "../services/users";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
-const Users = () => {
-  // getting blogs
-  const usersQuery = useQuery({
-    queryKey: ["users"],
-    queryFn: userService.getAll,
-    retry: 1,
-  });
-
-  if (usersQuery.isLoading) {
-    return <div>loading...</div>;
-  }
-
-  const users = usersQuery.data;
-  console.log("users: ", users);
-
+const UserList = ({ users }) => {
   return (
     <div>
       <h2>Users</h2>
@@ -36,6 +20,21 @@ const Users = () => {
           ))}
         </tbody>
       </table>
+    </div>
+  );
+};
+
+const Users = ({ usersQuery }) => {
+  if (usersQuery.isLoading) {
+    return <div>loading...</div>;
+  }
+
+  const users = usersQuery.data;
+  //console.log("users: ", users);
+
+  return (
+    <div>
+      <UserList users={users} />
     </div>
   );
 };
