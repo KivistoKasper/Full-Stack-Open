@@ -1,14 +1,23 @@
-import { useState, useEffect, createRef } from "react";
+import { createRef } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import storage from "./services/storage";
 
 import Login from "./components/Login";
-import Blog from "./components/Blog";
+import BlogList from "./components/BlogList";
 import NewBlog from "./components/NewBlog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import Users from "./components/Users";
 
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useNotificationDispatch } from "./contexts/NotificationContext";
@@ -144,8 +153,6 @@ const App = () => {
     );
   }
 
-  const byLikes = (a, b) => b.likes - a.likes;
-
   return (
     <div>
       <h2>blogs</h2>
@@ -154,17 +161,27 @@ const App = () => {
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </div>
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <NewBlog doCreate={handleCreate} />
-      </Togglable>
-      {blogs.sort(byLikes).map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          handleVote={handleVote}
-          handleDelete={handleDelete}
-        />
-      ))}
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div>
+                <Link to="/users">Show users</Link>
+                <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+                  <NewBlog doCreate={handleCreate} />
+                </Togglable>
+                <BlogList
+                  blogs={blogs}
+                  doVote={handleVote}
+                  doDelete={handleDelete}
+                />
+              </div>
+            }
+          />
+          <Route path="/users" element={<Users />} />
+        </Routes>
+      </Router>
     </div>
   );
 };
