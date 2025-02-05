@@ -177,19 +177,19 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <Router>
         <nav>
           <div className="nav">
             <Link to="/"> blogs </Link>
             <Link to="/users"> users </Link>
             <div className="user">
-              {user.name} logged in
+              logged in as {user.name}
               <button onClick={handleLogout}>logout</button>
             </div>
           </div>
         </nav>
-        <h2>blogs</h2>
+
         <Notification />
 
         <Routes>
@@ -197,6 +197,7 @@ const App = () => {
             path="/"
             element={
               <div>
+                <h2>blogs</h2>
                 <Togglable buttonLabel="create new blog" ref={blogFormRef}>
                   <NewBlog doCreate={handleCreate} />
                 </Togglable>
