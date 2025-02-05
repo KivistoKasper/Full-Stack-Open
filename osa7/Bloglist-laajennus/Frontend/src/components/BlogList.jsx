@@ -11,6 +11,8 @@ const BlogList = ({ blogs, doVote, doDelete }) => {
     marginBottom: 5,
   };
 
+  console.log("blogs: ", blogs);
+
   return (
     <div>
       {blogs.sort(byLikes).map((blog) => (

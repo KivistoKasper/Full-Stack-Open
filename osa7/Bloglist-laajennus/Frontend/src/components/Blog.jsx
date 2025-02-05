@@ -31,6 +31,12 @@ const Blog = ({ blogs, doVote, doDelete }) => {
       </div>
       <div>added by {nameOfUser}</div>
       {canRemove && <button onClick={() => doDelete(blog)}>remove</button>}
+      <h2>comments</h2>
+      <ul>
+        {blog.comments.map((comment) => (
+          <li key={comment}>{comment}</li>
+        ))}
+      </ul>
     </div>
   );
 };
