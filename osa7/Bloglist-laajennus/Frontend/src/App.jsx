@@ -55,6 +55,13 @@ const App = () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
   });
+  // for adding comments
+  const addCommentMutation = useMutation({
+    mutationFn: blogService.comment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
   // for saving user
   const saveUserMutation = useMutation({
     mutationFn: storage.saveUser,
@@ -152,6 +159,11 @@ const App = () => {
       notify(`Blog ${blog.title}, by ${blog.author} removed`);
     }
   };
+  const handleComment = async (comment) => {
+    addCommentMutation.mutate(comment);
+    console.log("commenting: ", comment);
+    notify(`Blog commented!`);
+  };
   // ------- Blog aggregation -------
 
   if (!user) {
@@ -197,7 +209,12 @@ const App = () => {
           <Route
             path="/blogs/:id"
             element={
-              <Blog blogs={blogs} doVote={handleVote} doDelete={handleDelete} />
+              <Blog
+                blogs={blogs}
+                doVote={handleVote}
+                doDelete={handleDelete}
+                doComment={handleComment}
+              />
             }
           />
         </Routes>

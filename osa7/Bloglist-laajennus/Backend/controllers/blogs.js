@@ -76,14 +76,6 @@ router.put("/:id", async (request, response) => {
 router.post("/:id/comments", async (request, response) => {
   const body = request.body;
 
-  const blog = {
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes,
-    comments: [body.comment],
-  };
-
   const updatedBlog = await Blog.findByIdAndUpdate(
     request.params.id,
     { $push: { comments: body.comment } },
